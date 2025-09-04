@@ -90,27 +90,17 @@ async function fetchEvent(id) {
 
     const eventAddress = data?.result?.venue_address || "";
 
-    // ✅ Time with fallback
-    const rawTime =
-      data?.result?.start_time ||
-      data?.result?.event_start_date ||
-      data?.result?.start_date_time ||
-      data?.result?.datetime ||
-      null;
-
-    const eventTime = rawTime
-      ? new Date(rawTime).toLocaleString("en-IN", {
-          dateStyle: "medium",
-          timeStyle: "short",
-        })
-      : "Time not available";
+    // ✅ Use display_date + display_time directly
+    const eventTime =
+      (data?.result?.display_date || "") +
+      (data?.result?.display_time ? ` ${data.result.display_time}` : "");
 
     if (!IGNORED_STATUSES.includes(btn) && btn !== prev) {
       const msg = `⚡ *Ticket Alert*
 Event: ${eventName}
 Status: *${btn}*
 Venue: ${eventVenue}${eventAddress ? `, ${eventAddress}` : ""}
-Time: ${eventTime}`;
+Time: ${eventTime || "Time not available"}`;
 
       await sendToTelegram(msg, data?.result?.banner_url);
 
@@ -139,7 +129,7 @@ Time: ${eventTime}`;
       id,
       name: eventName,
       status: btn,
-      time: rawTime,
+      time: eventTime || "Time not available",
       venue: eventVenue,
       address: eventAddress,
       banner: data?.result?.banner_url,
@@ -150,6 +140,7 @@ Time: ${eventTime}`;
     return { id, status: "Fetch error" };
   }
 }
+
 
 
   async function checkEvents() {
@@ -277,13 +268,9 @@ Time: ${eventTime}`;
               </span>
 
               {/* Time */}
-              <p style={{ fontSize: 13, color: "#555", marginTop: 8 }}>
-                ⏰{" "}
-                {event.time
-                  ? new Date(event.time).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })
-                  : "Time not available"}{" "}
-                ({timeAgo(event.time)})
-              </p>
+            <p style={{ fontSize: 13, color: "#555", marginTop: 8 }}>
+  ⏰ {event.time || "Time not available"}
+</p>
 
               {/* Venue + Address */}
               <p style={{ fontSize: 13, color: "#555", marginTop: 4 }}>
