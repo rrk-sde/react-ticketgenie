@@ -5,7 +5,7 @@ const eventIds = [232, 233, 234];
 const API_BASE = "/api";
 const TG_BOT_TOKEN = "8337634191:AAE1kltvBz64c7rI-qB8u3DtoDt1jOcqdAA";
 const TG_CHAT_ID = "314307608";
-const IGNORED_STATUSES = [];
+const IGNORED_STATUSES = ["SOLD OUT"];
 
 // ================== TELEGRAM ==================
 async function sendToTelegram(message, image) {
